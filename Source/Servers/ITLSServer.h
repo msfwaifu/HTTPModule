@@ -3,6 +3,7 @@
     License: LGPL 3.0
     Started: 2016-5-5
     Notes:
+        Buffered server with a callback on incoming data.
 */
 
 #pragma once
@@ -27,7 +28,6 @@ struct ITLSServerinfo : public ITCPServerinfo
 struct ITLSServer : public ITCPServer
 {
     // Single-socket operations.
-    virtual void onDisconnect(const size_t Socket) override;
     virtual void onConnect(const size_t Socket, const uint16_t Port) override;
 
     // Callback and methods to insert data.
@@ -43,6 +43,7 @@ struct ITLSServer : public ITCPServer
     }
 
     // Construct the server from a hostname.
-    ITLSServer() : ITCPServer() {};
-    ITLSServer(const char *Hostname) : ITCPServer(Hostname) {};
+    ITLSServer();
+    ITLSServer(const char *Hostname);
+    ITLSServer(const char *Hostname, const char *Certificate, const char *Key);
 };
