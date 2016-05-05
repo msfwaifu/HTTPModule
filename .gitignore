@@ -1,0 +1,8 @@
+﻿
+*.db
+*.opendb
+*.filters
+*.user
+*.suo
+*.sln
+*.licenseheader
