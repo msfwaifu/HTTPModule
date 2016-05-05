@@ -111,4 +111,3 @@ struct ITCPServer : public IServerEx
     ITCPServer() : IServerEx() {};
     ITCPServer(const char *Hostname) : IServerEx(Hostname) {};
 };
-

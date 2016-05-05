@@ -189,6 +189,7 @@
     <ClInclude Include="Source\Configuration\Warnings.h" />
     <ClInclude Include="Source\Datatypes\ISerializable.h" />
     <ClInclude Include="Source\Responses\IResponse.h" />
+    <ClInclude Include="Source\Servers\ITLSServer.h" />
     <ClInclude Include="Source\Services\IService.h" />
     <ClInclude Include="Source\Servers\IServer.h" />
     <ClInclude Include="Source\Servers\ITCPServer.h" />
