@@ -50,4 +50,5 @@
 // The authors on windows should be able to check basic ranges.
 #ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
 #endif
