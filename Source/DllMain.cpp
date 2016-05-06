@@ -7,13 +7,19 @@
 */
 
 #include <Configuration\All.h>
+#include <Servers\HTTPSServer.h>
 #include <cstdarg>
 
 extern "C"
 {
     // AyriaNetwork interface, create an instance of a server.
-    EXPORT_ATTR struct IServer *GetServerinstance(const char *Hostname)
+    EXPORT_ATTR IServer *GetServerinstance(const char *Hostname)
     {
+        if (std::strstr(Hostname, "auth"))
+        {
+            return new HTTPSServer(Hostname, "./Plugins/Networkingstorage/Testcert.pem", "./Plugins/Networkingstorage/Testkey.pem");
+        }
+
         return nullptr;
     }
 }

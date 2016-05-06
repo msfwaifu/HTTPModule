@@ -63,6 +63,10 @@ struct IServerEx : public IServer
     virtual bool onReadrequestEx(const size_t Socket, char *Databuffer, size_t *Datalength) = 0;
     virtual bool onWriterequestEx(const size_t Socket, const char *Databuffer, const size_t Datalength) = 0;
 
+    // Nullsub the base functions.
+    virtual bool onReadrequest(char *Databuffer, size_t *Datalength) { return false; };
+    virtual bool onWriterequest(const char *Databuffer, const size_t Datalength) { return false; };
+
     // Construct the server from a hostname.
     IServerEx() : IServer()
     {
