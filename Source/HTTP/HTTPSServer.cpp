@@ -12,6 +12,5 @@
 // Callback and methods to insert data.
 void HTTPSServer::onStreamdecrypted(std::string &Incomingstream)
 {
-
-    __debugbreak();
+    DebugPrint(Incomingstream.c_str());
 }

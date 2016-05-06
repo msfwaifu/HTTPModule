@@ -28,8 +28,7 @@ void ITLSServer::onStreamupdated(std::vector<uint8_t> &Incomingstream)
 
     if (!SSL_is_init_finished(GetServerinfo()->State))
     {
-        size_t Resultcode = SSL_do_handshake(GetServerinfo()->State);
-        if (Resultcode != 1) DebugPrint(va("OpenSSL error: %s", ERR_error_string(Resultcode, NULL)));
+        SSL_do_handshake(GetServerinfo()->State);
     }
     else
     {
