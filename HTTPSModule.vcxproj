@@ -212,6 +212,7 @@
   <ItemGroup>
     <ClCompile Include="Source\DllMain.cpp" />
     <ClCompile Include="Source\Servers\HTTPSServer.cpp" />
+    <ClCompile Include="Source\Servers\ITLSServer.cpp" />
     <ClCompile Include="Source\Utilities\Binarymodification\ImportAddressTable.cpp" />
     <ClCompile Include="Source\Utilities\Buffers\Bytebuffer.cpp" />
     <ClCompile Include="Source\Utilities\Files\CSVManager.cpp" />
