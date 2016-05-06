@@ -10,15 +10,17 @@
 #include <Servers\ITLSServer.h>
 
 // Callback and methods to insert data.
-void ITLSServer::Senddata(std::string &Databuffer) {};
-void ITLSServer::Senddata(const void *Databuffer, const size_t Datalength) {};
+void ITLSServer::Senddata(std::string &Databuffer) 
+{
+    Senddata(Databuffer.data(), Databuffer.size());
+};
+void ITLSServer::Senddata(const void *Databuffer, const size_t Datalength) 
+{
+    SSL_write(GetServerinfo()->State, Databuffer, Datalength);
+};
 void ITLSServer::onStreamupdated(std::vector<uint8_t> &Incomingstream) 
 {
     size_t Readcount;
-
-    // Debugging vars.
-    BIO *Write_BIO = GetServerinfo()->Read_BIO;
-    BIO *Read_BIO = GetServerinfo()->Write_BIO;  
 
     // Insert the data into the SSL buffer.
     BIO_write(GetServerinfo()->Read_BIO, Incomingstream.data(), Incomingstream.size());
