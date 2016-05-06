@@ -195,6 +195,7 @@
     <ClInclude Include="Source\HTTP\http_parser.h" />
     <ClInclude Include="Source\HTTP\Testserver.h" />
     <ClInclude Include="Source\Responses\IResponse.h" />
+    <ClInclude Include="Source\Servers\IHTTPServer.h" />
     <ClInclude Include="Source\Servers\HTTPSServer.h" />
     <ClInclude Include="Source\Servers\ITLSServer.h" />
     <ClInclude Include="Source\Services\IService.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="Source\HTTP\HTTPSServer.cpp" />
     <ClCompile Include="Source\HTTP\http_parser.c" />
     <ClCompile Include="Source\HTTP\Testserver.cpp" />
+    <ClCompile Include="Source\Servers\IHTTPServer.cpp" />
     <ClCompile Include="Source\Servers\ITLSServer.cpp" />
     <ClCompile Include="Source\Utilities\Binarymodification\ImportAddressTable.cpp" />
     <ClCompile Include="Source\Utilities\Buffers\Bytebuffer.cpp" />
