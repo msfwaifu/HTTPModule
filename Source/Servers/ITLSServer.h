@@ -9,10 +9,8 @@
 #pragma once
 #include <Configuration\All.h>
 #include <Servers\ITCPServer.h>
-#include <openssl/err.h>
-#include <openssl/ssl.h>
-#include <openssl/conf.h>
-#include <openssl/engine.h>
+#include <openssl\bio.h>
+#include <openssl\ssl.h>
 
 // Server-information that can be extended in other classes.
 #pragma pack(push, 1)
