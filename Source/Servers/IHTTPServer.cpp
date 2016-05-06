@@ -17,13 +17,13 @@ size_t Parse_Messagebegin(http_parser *Parser, HTTPRequest *Request)
 }
 size_t Parse_URL(http_parser *Parser, HTTPRequest *Request, const char *Data, size_t Length)
 {
-    Request->URL = Data;
+    Request->URL = std::string(Data, Length);
     return 0;
 }
 size_t Parse_Headerfield(http_parser *Parser, HTTPRequest *Request, const char *Data, size_t Length)
 {
     HTTPHeader Header;
-    Header.Field = Data;
+    Header.Field = std::string(Data, Length);
 
     Request->Headers.push_back(Header);
     return 0;
@@ -31,7 +31,7 @@ size_t Parse_Headerfield(http_parser *Parser, HTTPRequest *Request, const char *
 size_t Parse_Headervalue(http_parser *Parser, HTTPRequest *Request, const char *Data, size_t Length)
 {
     HTTPHeader *Header = &Request->Headers.back();
-    Header->Value = Data;
+    Header->Value = std::string(Data, Length);
     return 0;
 }
 size_t Parse_Headerscomplete(http_parser *Parser, HTTPRequest *Request)
@@ -41,7 +41,7 @@ size_t Parse_Headerscomplete(http_parser *Parser, HTTPRequest *Request)
 }
 size_t Parse_Body(http_parser *Parser, HTTPRequest *Request, const char *Data, size_t Length)
 {
-    Request->Body = Data;
+    Request->Body = std::string(Data, Length);
     return 0;
 }
 size_t Parse_Messagecomplete(http_parser *Parser, HTTPRequest *Request)
@@ -233,7 +233,7 @@ IHTTPSServer::IHTTPSServer(const char *Hostname) : ITLSServer(Hostname)
         return Parse_Messagecomplete(parser, (HTTPRequest *)parser->data);
     };
 };
-IHTTPSServer::IHTTPSServer(const char *Hostname, const char *Certificate, const char *Key) : ITLSServer(Hostname) 
+IHTTPSServer::IHTTPSServer(const char *Hostname, const char *Certificate, const char *Key) : ITLSServer(Hostname, Certificate, Key) 
 {
     http_parser_init(&Parser, HTTP_BOTH);
     http_parser_settings_init(&Parsersettings);

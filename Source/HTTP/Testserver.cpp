@@ -11,13 +11,13 @@
 // Callbacks on data.
 void Testserver::onGET(std::string &URL, std::string Body)
 {
-
+    __debugbreak();
 }
 void Testserver::onPUT(std::string &URL, std::string Body)
 {
-
+    __debugbreak();
 }
 void Testserver::onPOST(std::string &URL, std::string Body)
 {
-
+    __debugbreak();
 }
