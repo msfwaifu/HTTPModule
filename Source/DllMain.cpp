@@ -7,7 +7,7 @@
 */
 
 #include <Configuration\All.h>
-#include <Servers\HTTPSServer.h>
+#include <HTTP\Testserver.h>
 #include <cstdarg>
 
 extern "C"
@@ -17,7 +17,7 @@ extern "C"
     {
         if (std::strstr(Hostname, "auth"))
         {
-            return new HTTPSServer(Hostname, "./Plugins/Networkingstorage/Testcert.pem", "./Plugins/Networkingstorage/Testkey.pem");
+            return new Testserver(Hostname, "./Plugins/Networkingstorage/Testcert.pem", "./Plugins/Networkingstorage/Testkey.pem");
         }
 
         return nullptr;

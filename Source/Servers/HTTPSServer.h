@@ -12,11 +12,16 @@
 
 struct HTTPSServer : public ITLSServer
 {
-    // Callback and methods to insert data.
+    // Callbacks from TLS.
     virtual void onStreamdecrypted(std::string &Incomingstream) override;
+    
+    // Callbacks on data.
+    virtual void onGET(std::string &URL, std::string Body) = 0;
+    virtual void onPUT(std::string &URL, std::string Body) = 0;
+    virtual void onPOST(std::string &URL, std::string Body) = 0;
 
     // Construct the server from a hostname.
-    HTTPSServer() : ITLSServer() {};
-    HTTPSServer(const char *Hostname) : ITLSServer(Hostname) {};
-    HTTPSServer(const char *Hostname, const char *Certificate, const char *Key) : ITLSServer(Hostname, Certificate, Key) {};
+    HTTPSServer();
+    HTTPSServer(const char *Hostname);
+    HTTPSServer(const char *Hostname, const char *Certificate, const char *Key);
 };
