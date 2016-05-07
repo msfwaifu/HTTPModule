@@ -54,9 +54,15 @@ size_t Parse_Messagecomplete(http_parser *Parser, HTTPRequest *Request)
 void IHTTPServer::onStreamupdated(std::vector<uint8_t> &Incomingstream)
 {
     if (Parsedrequest.Parsed)
-        std::memset(&Parsedrequest, 0, sizeof(Parsedrequest));
+    {
+        Parsedrequest.Body.clear();
+        Parsedrequest.Headers.clear();
+        Parsedrequest.Method.clear();
+        Parsedrequest.URL.clear();
+        Parsedrequest.Parsed = false;
+    }
 
-    // Parse the incomming data.
+    // Parse the incoming data.
     http_parser_execute(&Parser, &Parsersettings, (const char *)Incomingstream.data(), Incomingstream.size());
 
     if (Parsedrequest.Parsed)
@@ -72,9 +78,15 @@ void IHTTPServer::onStreamupdated(std::vector<uint8_t> &Incomingstream)
 void IHTTPSServer::onStreamdecrypted(std::string &Incomingstream)
 {
     if (Parsedrequest.Parsed)
-        std::memset(&Parsedrequest, 0, sizeof(Parsedrequest));
+    {
+        Parsedrequest.Body.clear();
+        Parsedrequest.Headers.clear();
+        Parsedrequest.Method.clear();
+        Parsedrequest.URL.clear();
+        Parsedrequest.Parsed = false;
+    }
 
-    // Parse the incomming data.
+    // Parse the incoming data.
     http_parser_execute(&Parser, &Parsersettings, (const char *)Incomingstream.data(), Incomingstream.size());
 
     if (Parsedrequest.Parsed)
