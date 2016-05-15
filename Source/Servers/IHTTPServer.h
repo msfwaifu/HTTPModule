@@ -30,9 +30,11 @@ typedef struct HTTPRequest
 struct IHTTPServer : public ITCPServer
 {
     // Callbacks on data.
-    virtual void onGET(std::string &URL, std::string Body) = 0;
-    virtual void onPUT(std::string &URL, std::string Body) = 0;
-    virtual void onPOST(std::string &URL, std::string Body) = 0;
+    virtual void onGET(HTTPRequest &Request) = 0;
+    virtual void onPUT(HTTPRequest &Request) = 0;
+    virtual void onPOST(HTTPRequest &Request) = 0;
+    virtual void onCOPY(HTTPRequest &Request) = 0;
+    virtual void onDELETE(HTTPRequest &Request) = 0;
     virtual void onStreamupdated(std::vector<uint8_t> &Incomingstream) override;
 
     // Local parser.
@@ -49,9 +51,11 @@ struct IHTTPServer : public ITCPServer
 struct IHTTPSServer : public ITLSServer
 {
     // Callbacks on data.
-    virtual void onGET(std::string &URL, std::string Body) = 0;
-    virtual void onPUT(std::string &URL, std::string Body) = 0;
-    virtual void onPOST(std::string &URL, std::string Body) = 0;
+    virtual void onGET(HTTPRequest &Request) = 0;
+    virtual void onPUT(HTTPRequest &Request) = 0;
+    virtual void onPOST(HTTPRequest &Request) = 0;
+    virtual void onCOPY(HTTPRequest &Request) = 0;
+    virtual void onDELETE(HTTPRequest &Request) = 0;
     virtual void onStreamdecrypted(std::string &Incomingstream) override;
 
     // Local parser.

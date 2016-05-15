@@ -41,7 +41,7 @@ size_t Parse_Headerscomplete(http_parser *Parser, HTTPRequest *Request)
 }
 size_t Parse_Body(http_parser *Parser, HTTPRequest *Request, const char *Data, size_t Length)
 {
-    Request->Body = std::string(Data, Length);
+    Request->Body += std::string(Data, Length);
     return 0;
 }
 size_t Parse_Messagecomplete(http_parser *Parser, HTTPRequest *Request)
@@ -63,16 +63,21 @@ void IHTTPServer::onStreamupdated(std::vector<uint8_t> &Incomingstream)
     }
 
     // Parse the incoming data.
-    http_parser_execute(&Parser, &Parsersettings, (const char *)Incomingstream.data(), Incomingstream.size());
+    size_t Read = http_parser_execute(&Parser, &Parsersettings, (const char *)Incomingstream.data(), Incomingstream.size());
+    Incomingstream.erase(Incomingstream.begin(), Incomingstream.begin() + Read);
 
     if (Parsedrequest.Parsed)
     {
+        Streamguard.unlock();
         switch (FNV1a_Runtime_32(Parsedrequest.Method.c_str(), Parsedrequest.Method.size()))
         {
-            case FNV1a_Compiletime_32("GET"): onGET(Parsedrequest.URL, Parsedrequest.Body); break;
-            case FNV1a_Compiletime_32("PUT"): onPUT(Parsedrequest.URL, Parsedrequest.Body); break;
-            case FNV1a_Compiletime_32("POST"): onPOST(Parsedrequest.URL, Parsedrequest.Body); break;        
+            case FNV1a_Compiletime_32("GET"): onGET(Parsedrequest); break;
+            case FNV1a_Compiletime_32("PUT"): onPUT(Parsedrequest); break;
+            case FNV1a_Compiletime_32("POST"): onPOST(Parsedrequest); break;
+            case FNV1a_Compiletime_32("COPY"): onCOPY(Parsedrequest); break;
+            case FNV1a_Compiletime_32("DELETE"): onDELETE(Parsedrequest); break;
         }
+        Streamguard.lock();
     }
 }
 void IHTTPSServer::onStreamdecrypted(std::string &Incomingstream)
@@ -87,15 +92,18 @@ void IHTTPSServer::onStreamdecrypted(std::string &Incomingstream)
     }
 
     // Parse the incoming data.
-    http_parser_execute(&Parser, &Parsersettings, (const char *)Incomingstream.data(), Incomingstream.size());
+    size_t Read = http_parser_execute(&Parser, &Parsersettings, (const char *)Incomingstream.data(), Incomingstream.size());
+    Incomingstream.erase(Incomingstream.begin(), Incomingstream.begin() + Read);
 
     if (Parsedrequest.Parsed)
     {
         switch (FNV1a_Runtime_32(Parsedrequest.Method.c_str(), Parsedrequest.Method.size()))
         {
-            case FNV1a_Compiletime_32("GET"): onGET(Parsedrequest.URL, Parsedrequest.Body); break;
-            case FNV1a_Compiletime_32("PUT"): onPUT(Parsedrequest.URL, Parsedrequest.Body); break;
-            case FNV1a_Compiletime_32("POST"): onPOST(Parsedrequest.URL, Parsedrequest.Body); break;        
+            case FNV1a_Compiletime_32("GET"): onGET(Parsedrequest); break;
+            case FNV1a_Compiletime_32("PUT"): onPUT(Parsedrequest); break;
+            case FNV1a_Compiletime_32("POST"): onPOST(Parsedrequest); break;
+            case FNV1a_Compiletime_32("COPY"): onCOPY(Parsedrequest); break;
+            case FNV1a_Compiletime_32("DELETE"): onDELETE(Parsedrequest); break;
         }
     }
 }
