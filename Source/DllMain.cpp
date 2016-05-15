@@ -7,7 +7,7 @@
 */
 
 #include <Configuration\All.h>
-#include <HTTP\Testserver.h>
+#include <Servers\IHTTPServer.h>
 #include <cstdarg>
 
 extern "C"
@@ -15,11 +15,6 @@ extern "C"
     // AyriaNetwork interface, create an instance of a server.
     EXPORT_ATTR IServer *GetServerinstance(const char *Hostname)
     {
-        if (std::strstr(Hostname, "auth"))
-        {
-            return new Testserver(Hostname, "./Plugins/Networkingstorage/Testcert.pem", "./Plugins/Networkingstorage/Testkey.pem");
-        }
-
         return nullptr;
     }
 }

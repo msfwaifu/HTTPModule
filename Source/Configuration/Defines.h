@@ -45,7 +45,7 @@
 #define DEBUGTOSTREAM
 
 // The extension name that will be used throughout the application.
-#define EXTENSIONNAME "HTTPSModule"
+#define EXTENSIONNAME "HTTPModule"
 
 // The authors on windows should be able to check basic ranges.
 #ifdef _WIN32
