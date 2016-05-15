@@ -194,7 +194,6 @@
     <ClInclude Include="Source\Configuration\Warnings.h" />
     <ClInclude Include="Source\Datatypes\ISerializable.h" />
     <ClInclude Include="Source\HTTP\http_parser.h" />
-    <ClInclude Include="Source\HTTP\Testserver.h" />
     <ClInclude Include="Source\Responses\IResponse.h" />
     <ClInclude Include="Source\Servers\IHTTPServer.h" />
     <ClInclude Include="Source\Servers\ITLSServer.h" />
@@ -215,7 +214,6 @@
   <ItemGroup>
     <ClCompile Include="Source\DllMain.cpp" />
     <ClCompile Include="Source\HTTP\http_parser.c" />
-    <ClCompile Include="Source\HTTP\Testserver.cpp" />
     <ClCompile Include="Source\Servers\IHTTPServer.cpp" />
     <ClCompile Include="Source\Servers\ITLSServer.cpp" />
     <ClCompile Include="Source\Utilities\Binarymodification\ImportAddressTable.cpp" />
