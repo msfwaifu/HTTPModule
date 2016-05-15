@@ -33,6 +33,7 @@ struct ITCPServer : public IServerEx
     virtual void onDisconnect(const size_t Socket)
     {
         GetServerinfo()->Connected = false;
+        Incomingstream.clear();
     }
     virtual void onConnect(const size_t Socket, const uint16_t Port)
     {
@@ -41,7 +42,8 @@ struct ITCPServer : public IServerEx
     virtual bool onReadrequestEx(const size_t Socket, char *Databuffer, size_t *Datalength)
     {
         // If we have disconnected, we should return a length of 0.
-        if (false == GetServerinfo()->Connected)
+        // But for security layers we need to send the remaining data.
+        if (false == GetServerinfo()->Connected && 0 == Outgoingstream.size())
         {
             *Datalength = 0;
             return true;
