@@ -30,6 +30,11 @@ struct HTTPRequest
 // Standard HTTP.
 struct IHTTPServer : public ITCPServer
 {
+    // Local parsers.
+    std::unordered_map<size_t, http_parser> Parser;
+    std::unordered_map<size_t, HTTPRequest> Parsedrequest;
+    std::unordered_map<size_t, http_parser_settings> Parsersettings;
+
     // Callbacks on data.
     virtual void onGET(const size_t Socket, HTTPRequest &Request) = 0;
     virtual void onPUT(const size_t Socket, HTTPRequest &Request) = 0;
@@ -38,11 +43,6 @@ struct IHTTPServer : public ITCPServer
     virtual void onDELETE(const size_t Socket, HTTPRequest &Request) = 0;
     virtual void onStreamupdated(const size_t Socket, std::vector<uint8_t> &Incomingstream) override;
 
-    // Local parsers.
-    std::unordered_map<size_t, http_parser> Parser;
-    std::unordered_map<size_t, HTTPRequest> Parsedrequest;
-    std::unordered_map<size_t, http_parser_settings> Parsersettings;
-    
     // Construct the server from a hostname.
     IHTTPServer();
     IHTTPServer(const char *Hostname);
@@ -51,6 +51,11 @@ struct IHTTPServer : public ITCPServer
 // Encrypted HTTP.
 struct IHTTPSServer : public ITLSServer
 {
+    // Local parsers.
+    std::unordered_map<size_t, http_parser> Parser;
+    std::unordered_map<size_t, HTTPRequest> Parsedrequest;
+    std::unordered_map<size_t, http_parser_settings> Parsersettings;
+
     // Callbacks on data.
     virtual void onGET(const size_t Socket, HTTPRequest &Request) = 0;
     virtual void onPUT(const size_t Socket, HTTPRequest &Request) = 0;
@@ -58,11 +63,6 @@ struct IHTTPSServer : public ITLSServer
     virtual void onCOPY(const size_t Socket, HTTPRequest &Request) = 0;
     virtual void onDELETE(const size_t Socket, HTTPRequest &Request) = 0;
     virtual void onStreamdecrypted(const size_t Socket, std::string &Incomingstream) override;
-
-    // Local parsers.
-    std::unordered_map<size_t, http_parser> Parser;
-    std::unordered_map<size_t, HTTPRequest> Parsedrequest;
-    std::unordered_map<size_t, http_parser_settings> Parsersettings;
 
     // Construct the server from a hostname.
     IHTTPSServer();

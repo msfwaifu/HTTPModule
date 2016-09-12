@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <mutex>
 
+
 // Server-information that can be extended in other classes.
 #pragma pack(push, 1)
 struct ITCPServerinfo : public IServerinfo
@@ -33,19 +34,20 @@ struct ITCPServer : public IServerEx
     // Single-socket operations.
     virtual void onDisconnect(const size_t Socket)
     {
-        GetServerinfo()->Connected->at(Socket) = false;
         Incomingstream[Socket].clear();
+        (*GetServerinfo()->Connected)[Socket] = false;        
     }
     virtual void onConnect(const size_t Socket, const uint16_t Port)
     {
-        GetServerinfo()->Connected->at(Socket) = true;
+        Incomingstream[Socket].clear();
         Outgoingstream[Socket].clear();
+        (*GetServerinfo()->Connected)[Socket] = true;        
     }
     virtual bool onReadrequestEx(const size_t Socket, char *Databuffer, size_t *Datalength)
     {
         // If we have disconnected, we should return a length of 0.
         // But for security layers we need to send the remaining data.
-        if (false == GetServerinfo()->Connected->at(Socket) && 0 == Outgoingstream[Socket].size())
+        if (false == (*GetServerinfo()->Connected)[Socket] && 0 == Outgoingstream[Socket].size())
         {
             *Datalength = 0;
             return true;
@@ -70,7 +72,7 @@ struct ITCPServer : public IServerEx
     virtual bool onWriterequestEx(const size_t Socket, const char *Databuffer, const size_t Datalength)
     {
         // If we are not connected, drop the data.
-        if (false == GetServerinfo()->Connected->at(Socket))
+        if (false == (*GetServerinfo()->Connected)[Socket])
             return false;
 
         // Copy all the data into our stream.

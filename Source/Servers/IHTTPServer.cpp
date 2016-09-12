@@ -53,45 +53,45 @@ size_t Parse_Messagecomplete(http_parser *Parser, HTTPRequest *Request)
 // Callbacks on incoming data.
 void IHTTPServer::onStreamupdated(const size_t Socket, std::vector<uint8_t> &Incomingstream)
 {
-	// Create a parser if needed.
-	if (Parser.find(Socket) == Parser.end())
-	{
-		http_parser_init(&Parser[Socket], HTTP_BOTH);
-		http_parser_settings_init(&Parsersettings[Socket]);
-		Parsedrequest[Socket].Parsed = false;
-		Parser[Socket].data = &Parsedrequest[Socket];
+    // Create a parser if needed.
+    if (Parser.find(Socket) == Parser.end())
+    {
+        http_parser_init(&Parser[Socket], HTTP_BOTH);
+        http_parser_settings_init(&Parsersettings[Socket]);
+        Parsedrequest[Socket].Parsed = false;
+        Parser[Socket].data = &Parsedrequest[Socket];
 
-		Parsersettings[Socket].on_message_begin = [](http_parser *parser) -> int
-		{
-			return Parse_Messagebegin(parser, (HTTPRequest *)parser->data);
-		};
-		Parsersettings[Socket].on_url = [](http_parser* parser, const char* at, size_t len) -> int
-		{
-			return Parse_URL(parser, (HTTPRequest *)parser->data, at, len);
-		};
-		Parsersettings[Socket].on_header_field = [](http_parser* parser, const char* at, size_t len) -> int
-		{
-			return Parse_Headerfield(parser, (HTTPRequest *)parser->data, at, len);
-		};
-		Parsersettings[Socket].on_header_value = [](http_parser* parser, const char* at, size_t len) -> int
-		{
-			return Parse_Headervalue(parser, (HTTPRequest *)parser->data, at, len);
-		};
-		Parsersettings[Socket].on_headers_complete = [](http_parser* parser) -> int
-		{
-			return Parse_Headerscomplete(parser, (HTTPRequest *)parser->data);
-		};
-		Parsersettings[Socket].on_body = [](http_parser* parser, const char* at, size_t len) -> int
-		{
-			return Parse_Body(parser, (HTTPRequest *)parser->data, at, len);
-		};
-		Parsersettings[Socket].on_message_complete = [](http_parser* parser) -> int
-		{
-			return Parse_Messagecomplete(parser, (HTTPRequest *)parser->data);
-		};
-	}
+        Parsersettings[Socket].on_message_begin = [](http_parser *parser) -> int
+        {
+            return Parse_Messagebegin(parser, (HTTPRequest *)parser->data);
+        };
+        Parsersettings[Socket].on_url = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_URL(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_header_field = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_Headerfield(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_header_value = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_Headervalue(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_headers_complete = [](http_parser* parser) -> int
+        {
+            return Parse_Headerscomplete(parser, (HTTPRequest *)parser->data);
+        };
+        Parsersettings[Socket].on_body = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_Body(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_message_complete = [](http_parser* parser) -> int
+        {
+            return Parse_Messagecomplete(parser, (HTTPRequest *)parser->data);
+        };
+    }
 
-	// Clear any old data.
+    // Clear any old data.
     if (Parsedrequest[Socket].Parsed)
     {
         Parsedrequest[Socket].Body.clear();
@@ -121,6 +121,45 @@ void IHTTPServer::onStreamupdated(const size_t Socket, std::vector<uint8_t> &Inc
 }
 void IHTTPSServer::onStreamdecrypted(const size_t Socket, std::string &Incomingstream)
 {
+    // Create a parser if needed.
+    if (Parser.find(Socket) == Parser.end())
+    {
+        http_parser_init(&Parser[Socket], HTTP_BOTH);
+        http_parser_settings_init(&Parsersettings[Socket]);
+        Parsedrequest[Socket].Parsed = false;
+        Parser[Socket].data = &Parsedrequest[Socket];
+
+        Parsersettings[Socket].on_message_begin = [](http_parser *parser) -> int
+        {
+            return Parse_Messagebegin(parser, (HTTPRequest *)parser->data);
+        };
+        Parsersettings[Socket].on_url = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_URL(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_header_field = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_Headerfield(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_header_value = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_Headervalue(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_headers_complete = [](http_parser* parser) -> int
+        {
+            return Parse_Headerscomplete(parser, (HTTPRequest *)parser->data);
+        };
+        Parsersettings[Socket].on_body = [](http_parser* parser, const char* at, size_t len) -> int
+        {
+            return Parse_Body(parser, (HTTPRequest *)parser->data, at, len);
+        };
+        Parsersettings[Socket].on_message_complete = [](http_parser* parser) -> int
+        {
+            return Parse_Messagecomplete(parser, (HTTPRequest *)parser->data);
+        };
+    }
+
+    // Clear any old data.
     if (Parsedrequest[Socket].Parsed)
     {
         Parsedrequest[Socket].Body.clear();
