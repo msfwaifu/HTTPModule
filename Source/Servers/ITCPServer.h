@@ -10,6 +10,7 @@
 #pragma once
 #include <Configuration\All.h>
 #include <Servers\IServer.h>
+#include <unordered_map>
 #include <algorithm>
 #include <mutex>
 
@@ -17,7 +18,7 @@
 #pragma pack(push, 1)
 struct ITCPServerinfo : public IServerinfo
 {
-    bool Connected;
+    std::unordered_map<size_t, bool> Connected;
 };
 #pragma pack(pop)
 
@@ -25,83 +26,83 @@ struct ITCPServerinfo : public IServerinfo
 struct ITCPServer : public IServerEx
 {
     // Data-queues for the streams.
-    std::vector<uint8_t> Incomingstream;
-    std::vector<uint8_t> Outgoingstream;
-    std::mutex Streamguard;
+    std::unordered_map<size_t, std::vector<uint8_t>> Incomingstream;
+    std::unordered_map<size_t, std::vector<uint8_t>> Outgoingstream;
+    std::unordered_map<size_t, std::mutex> Streamguard;
 
     // Single-socket operations.
     virtual void onDisconnect(const size_t Socket)
     {
-        GetServerinfo()->Connected = false;
-        Incomingstream.clear();
+        GetServerinfo()->Connected[Socket] = false;
+        Incomingstream[Socket].clear();
     }
     virtual void onConnect(const size_t Socket, const uint16_t Port)
     {
-        GetServerinfo()->Connected = true;
+        GetServerinfo()->Connected[Socket] = true;
     }
     virtual bool onReadrequestEx(const size_t Socket, char *Databuffer, size_t *Datalength)
     {
         // If we have disconnected, we should return a length of 0.
         // But for security layers we need to send the remaining data.
-        if (false == GetServerinfo()->Connected && 0 == Outgoingstream.size())
+        if (false == GetServerinfo()->Connected[Socket] && 0 == Outgoingstream[Socket].size())
         {
             *Datalength = 0;
             return true;
         }
 
         // If we have no outgoing data, we can't handle the request.
-        if (0 == Outgoingstream.size())
+        if (0 == Outgoingstream[Socket].size())
             return false;
 
         // Copy as much data as we can to the buffer.
-        Streamguard.lock();
+        Streamguard[Socket].lock();
         {
-            size_t Bytesread = std::min(*Datalength, Outgoingstream.size());
-            std::copy(Outgoingstream.begin(), Outgoingstream.begin() + Bytesread, Databuffer);
-            Outgoingstream.erase(Outgoingstream.begin(), Outgoingstream.begin() + Bytesread);
+            size_t Bytesread = std::min(*Datalength, Outgoingstream[Socket].size());
+            std::copy(Outgoingstream[Socket].begin(), Outgoingstream[Socket].begin() + Bytesread, Databuffer);
+            Outgoingstream[Socket].erase(Outgoingstream[Socket].begin(), Outgoingstream[Socket].begin() + Bytesread);
             *Datalength = Bytesread;
         }
-        Streamguard.unlock();
+        Streamguard[Socket].unlock();
 
         return true;
     }
     virtual bool onWriterequestEx(const size_t Socket, const char *Databuffer, const size_t Datalength)
     {
         // If we are not connected, drop the data.
-        if (false == GetServerinfo()->Connected)
+        if (false == GetServerinfo()->Connected[Socket])
             return false;
 
         // Copy all the data into our stream.
-        Streamguard.lock();
+        Streamguard[Socket].lock();
         {
-            Incomingstream.insert(Incomingstream.end(), Databuffer, Databuffer + Datalength);
-            onStreamupdated(Incomingstream);
+            Incomingstream[Socket].insert(Incomingstream[Socket].end(), Databuffer, Databuffer + Datalength);
+            onStreamupdated(Socket, Incomingstream[Socket]);
         }
-        Streamguard.unlock();
+        Streamguard[Socket].unlock();
 
         return true;
     }
 
     // Callback and methods to insert data.
-    virtual void Senddata(std::string &Databuffer)
+    virtual void Senddata(const size_t Socket, std::string &Databuffer)
     {
-        Streamguard.lock();
+        Streamguard[Socket].lock();
         {
             const char *Bytepointer = Databuffer.c_str();
-            Outgoingstream.insert(Outgoingstream.end(), Bytepointer, Bytepointer + Databuffer.size());
+            Outgoingstream[Socket].insert(Outgoingstream[Socket].end(), Bytepointer, Bytepointer + Databuffer.size());
         }
-        Streamguard.unlock();
+        Streamguard[Socket].unlock();
     }
-    virtual void Senddata(const void *Databuffer, const size_t Datalength)
+    virtual void Senddata(const size_t Socket, const void *Databuffer, const size_t Datalength)
     {
-        Streamguard.lock();
+        Streamguard[Socket].lock();
         {
             const char *Bytepointer = (const char *)Databuffer;
-            Outgoingstream.insert(Outgoingstream.end(), Bytepointer, Bytepointer + Datalength);
+            Outgoingstream[Socket].insert(Outgoingstream[Socket].end(), Bytepointer, Bytepointer + Datalength);
         }
-        Streamguard.unlock();
+        Streamguard[Socket].unlock();
     }
-    virtual void onStreamupdated(std::vector<uint8_t> &Incomingstream) = 0;
+    virtual void onStreamupdated(const size_t Socket, std::vector<uint8_t> &Incomingstream) = 0;
 
     // Server information in a raw format.
     ITCPServerinfo *GetServerinfo()
