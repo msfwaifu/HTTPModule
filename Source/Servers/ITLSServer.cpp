@@ -74,48 +74,11 @@ void ITLSServer::onStreamupdated(const size_t Socket, std::vector<uint8_t> &Inco
     Syncbuffers(Socket);
 }
 
-// Patch the hyperquest binary to remove SSL checks.
-int mycert_verify_callback(int ok, X509_STORE_CTX *ctx)
-{
-    PrintFunction();
-    return ok;
-}
-long mySSL_get_verify_result(const SSL *ssl)
-{
-    PrintFunction();
-    return X509_V_OK;
-}
-static void InstallTLSPatch()
-{
-    static bool Patched = false;
-    if (Patched) return;
-    Patched = true;
-
-    while (true)
-    {
-        auto Address = FindpatternText("\x8B\x44\x24\x04\x8B\x4C\x24\x08\x8B\x54\x24\x0C\x89\x88\xC0\x00\x00\x00\x89\x90\xE8\x00\x00\x00\xC3", "\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01");
-        if (Address)
-        {
-            Insertjump(Address, (uint64_t)mycert_verify_callback);
-        }
-
-        Address = FindpatternText("\x8B\x44\x24\x04\x8B\x80\xEC\x00\x00\x00\xC3", "\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01");
-        if (Address)
-        {
-            Insertjump(Address, (uint64_t)mySSL_get_verify_result);
-            return;
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-}
-
 // TLS-state management.
 void ITLSServer::onConnect(const size_t Socket, const uint16_t Port)
 {
     size_t Resultcode;
     ITCPServer::onConnect(Socket, Port);
-    std::thread(InstallTLSPatch).detach();
 
     // Initialize the context.
     {
