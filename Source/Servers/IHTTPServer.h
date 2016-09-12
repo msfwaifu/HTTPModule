@@ -11,13 +11,14 @@
 #include <Servers\ITCPServer.h>
 #include <Servers\ITLSServer.h>
 #include <HTTP\http_parser.h>
+#include <unordered_map>
 
-typedef struct HTTPHeader
+struct HTTPHeader
 {
     std::string Field;
     std::string Value;
 };
-typedef struct HTTPRequest
+struct HTTPRequest
 {
     bool Parsed;
     std::string URL;
@@ -30,17 +31,17 @@ typedef struct HTTPRequest
 struct IHTTPServer : public ITCPServer
 {
     // Callbacks on data.
-    virtual void onGET(HTTPRequest &Request) = 0;
-    virtual void onPUT(HTTPRequest &Request) = 0;
-    virtual void onPOST(HTTPRequest &Request) = 0;
-    virtual void onCOPY(HTTPRequest &Request) = 0;
-    virtual void onDELETE(HTTPRequest &Request) = 0;
-    virtual void onStreamupdated(std::vector<uint8_t> &Incomingstream) override;
+    virtual void onGET(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPUT(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPOST(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onCOPY(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onDELETE(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onStreamupdated(const size_t Socket, std::vector<uint8_t> &Incomingstream) override;
 
-    // Local parser.
-    http_parser Parser;
-    HTTPRequest Parsedrequest;
-    http_parser_settings Parsersettings;
+    // Local parsers.
+    std::unordered_map<size_t, http_parser> Parser;
+    std::unordered_map<size_t, HTTPRequest> Parsedrequest;
+    std::unordered_map<size_t, http_parser_settings> Parsersettings;
     
     // Construct the server from a hostname.
     IHTTPServer();
@@ -51,17 +52,17 @@ struct IHTTPServer : public ITCPServer
 struct IHTTPSServer : public ITLSServer
 {
     // Callbacks on data.
-    virtual void onGET(HTTPRequest &Request) = 0;
-    virtual void onPUT(HTTPRequest &Request) = 0;
-    virtual void onPOST(HTTPRequest &Request) = 0;
-    virtual void onCOPY(HTTPRequest &Request) = 0;
-    virtual void onDELETE(HTTPRequest &Request) = 0;
-    virtual void onStreamdecrypted(std::string &Incomingstream) override;
+    virtual void onGET(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPUT(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPOST(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onCOPY(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onDELETE(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onStreamdecrypted(const size_t Socket, std::string &Incomingstream) override;
 
-    // Local parser.
-    http_parser Parser;
-    HTTPRequest Parsedrequest;
-    http_parser_settings Parsersettings;
+    // Local parsers.
+    std::unordered_map<size_t, http_parser> Parser;
+    std::unordered_map<size_t, HTTPRequest> Parsedrequest;
+    std::unordered_map<size_t, http_parser_settings> Parsersettings;
 
     // Construct the server from a hostname.
     IHTTPSServer();

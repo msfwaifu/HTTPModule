@@ -12,26 +12,34 @@
 #include <openssl\bio.h>
 #include <openssl\ssl.h>
 #include <openssl\err.h>
+#include <unordered_map>
 
 // Server-information that can be extended in other classes.
 #pragma pack(push, 1)
 struct ITLSServerinfo : public ITCPServerinfo
 {
-    SSL_CTX *Context;
-    BIO *Write_BIO;
-    BIO *Read_BIO;    
-    SSL *State;
+	std::unordered_map<size_t, SSL_CTX *> Context;    
+    std::unordered_map<size_t, BIO *> Write_BIO;
+    std::unordered_map<size_t, BIO *> Read_BIO;    
+    std::unordered_map<size_t, SSL *> State;
+
+	const char *SSLKey = "";
+	const char *SSLCert = "";
 };
 #pragma pack(pop)
 
 struct ITLSServer : public ITCPServer
 {
     // Callback and methods to insert data.
-    virtual void Senddata(std::string &Databuffer) override;
-    virtual void Senddata(const void *Databuffer, const size_t Datalength) override;
-    virtual void onStreamupdated(std::vector<uint8_t> &Incomingstream) override;
-    virtual void onStreamdecrypted(std::string &Incomingstream) = 0;
-    virtual void Syncbuffers();
+    virtual void Senddata(const size_t Socket, std::string &Databuffer) override;
+    virtual void Senddata(const size_t Socket, const void *Databuffer, const size_t Datalength) override;
+    virtual void onStreamupdated(const size_t Socket, std::vector<uint8_t> &Incomingstream) override;
+    virtual void onStreamdecrypted(const size_t Socket, std::string &Incomingstream) = 0;
+
+	// TLS-state management.
+	virtual void onConnect(const size_t Socket, const uint16_t Port) override;
+	virtual void onDisconnect(const size_t Socket) override;
+    virtual void Syncbuffers(const size_t Socket);
 
     // Server information in a raw format.
     ITLSServerinfo *GetServerinfo()
