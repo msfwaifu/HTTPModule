@@ -18,7 +18,7 @@
 #pragma pack(push, 1)
 struct ITCPServerinfo : public IServerinfo
 {
-    std::unordered_map<size_t, bool> Connected;
+    std::shared_ptr<std::unordered_map<size_t, bool>> Connected;
 };
 #pragma pack(pop)
 
@@ -33,19 +33,19 @@ struct ITCPServer : public IServerEx
     // Single-socket operations.
     virtual void onDisconnect(const size_t Socket)
     {
-        GetServerinfo()->Connected[Socket] = false;
+        GetServerinfo()->Connected->at(Socket) = false;
         Incomingstream[Socket].clear();
     }
     virtual void onConnect(const size_t Socket, const uint16_t Port)
     {
-        GetServerinfo()->Connected[Socket] = true;
-	Outgoingstream[Socket].clear();
+        GetServerinfo()->Connected->at(Socket) = true;
+        Outgoingstream[Socket].clear();
     }
     virtual bool onReadrequestEx(const size_t Socket, char *Databuffer, size_t *Datalength)
     {
         // If we have disconnected, we should return a length of 0.
         // But for security layers we need to send the remaining data.
-        if (false == GetServerinfo()->Connected[Socket] && 0 == Outgoingstream[Socket].size())
+        if (false == GetServerinfo()->Connected->at(Socket) && 0 == Outgoingstream[Socket].size())
         {
             *Datalength = 0;
             return true;
@@ -70,7 +70,7 @@ struct ITCPServer : public IServerEx
     virtual bool onWriterequestEx(const size_t Socket, const char *Databuffer, const size_t Datalength)
     {
         // If we are not connected, drop the data.
-        if (false == GetServerinfo()->Connected[Socket])
+        if (false == GetServerinfo()->Connected->at(Socket))
             return false;
 
         // Copy all the data into our stream.
@@ -112,6 +112,6 @@ struct ITCPServer : public IServerEx
     }
 
     // Construct the server from a hostname.
-    ITCPServer() : IServerEx() {};
-    ITCPServer(const char *Hostname) : IServerEx(Hostname) {};
+    ITCPServer() : IServerEx() { GetServerinfo()->Connected = std::make_shared<std::unordered_map<size_t, bool>>(); };
+    ITCPServer(const char *Hostname) : IServerEx(Hostname) { GetServerinfo()->Connected = std::make_shared<std::unordered_map<size_t, bool>>(); };
 };
