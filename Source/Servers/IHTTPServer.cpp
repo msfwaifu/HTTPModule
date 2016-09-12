@@ -110,11 +110,11 @@ void IHTTPServer::onStreamupdated(const size_t Socket, std::vector<uint8_t> &Inc
         Streamguard[Socket].unlock();
         switch (FNV1a_Runtime_32(Parsedrequest[Socket].Method.c_str(), Parsedrequest[Socket].Method.size()))
         {
-            case FNV1a_Compiletime_32("GET"): onGET(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("PUT"): onPUT(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("POST"): onPOST(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("COPY"): onCOPY(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("DELETE"): onDELETE(Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("GET"): onGET(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("PUT"): onPUT(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("POST"): onPOST(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("COPY"): onCOPY(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("DELETE"): onDELETE(Socket, Parsedrequest[Socket]); break;
         }
         Streamguard[Socket].lock();
     }
@@ -139,11 +139,11 @@ void IHTTPSServer::onStreamdecrypted(const size_t Socket, std::string &Incomings
         Streamguard[Socket].unlock();
         switch (FNV1a_Runtime_32(Parsedrequest[Socket].Method.c_str(), Parsedrequest[Socket].Method.size()))
         {
-            case FNV1a_Compiletime_32("GET"): onGET(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("PUT"): onPUT(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("POST"): onPOST(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("COPY"): onCOPY(Parsedrequest[Socket]); break;
-            case FNV1a_Compiletime_32("DELETE"): onDELETE(Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("GET"): onGET(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("PUT"): onPUT(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("POST"): onPOST(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("COPY"): onCOPY(Socket, Parsedrequest[Socket]); break;
+            case FNV1a_Compiletime_32("DELETE"): onDELETE(Socket, Parsedrequest[Socket]); break;
         }
         Streamguard[Socket].lock();
     }

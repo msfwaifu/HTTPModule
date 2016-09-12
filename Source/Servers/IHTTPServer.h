@@ -31,11 +31,11 @@ struct HTTPRequest
 struct IHTTPServer : public ITCPServer
 {
     // Callbacks on data.
-    virtual void onGET(HTTPRequest &Request) = 0;
-    virtual void onPUT(HTTPRequest &Request) = 0;
-    virtual void onPOST(HTTPRequest &Request) = 0;
-    virtual void onCOPY(HTTPRequest &Request) = 0;
-    virtual void onDELETE(HTTPRequest &Request) = 0;
+    virtual void onGET(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPUT(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPOST(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onCOPY(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onDELETE(const size_t Socket, HTTPRequest &Request) = 0;
     virtual void onStreamupdated(const size_t Socket, std::vector<uint8_t> &Incomingstream) override;
 
     // Local parsers.
@@ -52,11 +52,11 @@ struct IHTTPServer : public ITCPServer
 struct IHTTPSServer : public ITLSServer
 {
     // Callbacks on data.
-    virtual void onGET(HTTPRequest &Request) = 0;
-    virtual void onPUT(HTTPRequest &Request) = 0;
-    virtual void onPOST(HTTPRequest &Request) = 0;
-    virtual void onCOPY(HTTPRequest &Request) = 0;
-    virtual void onDELETE(HTTPRequest &Request) = 0;
+    virtual void onGET(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPUT(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onPOST(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onCOPY(const size_t Socket, HTTPRequest &Request) = 0;
+    virtual void onDELETE(const size_t Socket, HTTPRequest &Request) = 0;
     virtual void onStreamdecrypted(const size_t Socket, std::string &Incomingstream) override;
 
     // Local parsers.

@@ -39,6 +39,7 @@ struct ITCPServer : public IServerEx
     virtual void onConnect(const size_t Socket, const uint16_t Port)
     {
         GetServerinfo()->Connected[Socket] = true;
+		Outgoingstream[Socket].clear();
     }
     virtual bool onReadrequestEx(const size_t Socket, char *Databuffer, size_t *Datalength)
     {
