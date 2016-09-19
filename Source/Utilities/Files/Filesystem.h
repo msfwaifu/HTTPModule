@@ -24,4 +24,5 @@ struct Filesystem
     static bool Createdir(const char *Path);
 
     static bool Searchdir(std::string Searchpath, std::vector<std::string> *Filenames, const char *Extension = nullptr);
+    static bool Searchdirrecursive(std::string Searchpath, std::vector<std::string> *Filenames, const char *Extension = nullptr);
 };
